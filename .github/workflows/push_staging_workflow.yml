@@ -1,0 +1,59 @@
+name: Deploy React App
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build React App
+        run: CI=false npm run build
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@v0.1.4
+        with:
+          host: ${{ secrets.HOST }}
+          port: ${{ secrets.PORT }}  # SSH port for Namecheap shared hosting
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          script: |
+            # Navigate to deployment directory
+            cd ~/staging-manager.divineglobalgrowth.com
+            
+            # Initialize Git repository if not already done
+            if [ ! -d ".git" ]; then
+              git init
+              git remote add origin https://github.com/SirG97/savings-manager.git
+            fi
+
+            # Pull latest code from the staging branch
+            git fetch origin
+            git reset --hard origin/staging
+            
+            # Install Node.js using nvm
+            if [ ! -d "$HOME/.nvm" ]; then
+              curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.5/install.sh | bash
+            fi
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install 20.13.1
+            nvm use 20.13.1
+            
+            # Install dependencies and build the React app
+            npm install --legacy-peer-deps
+            
+            echo "Deployment successful!"
