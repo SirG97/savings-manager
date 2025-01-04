@@ -39,7 +39,7 @@ export default function Login() {
         }
         navigate("/");
       } else {
-        toast.error("An error occurred. Try again!");
+        toast.error(resp.response?.data?.data?.message);
       }
     });
   };

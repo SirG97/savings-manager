@@ -6,7 +6,7 @@ export const loginUser = async (dispatch, user) => {
   
     dispatch(actionStart())
     try {
-      const resp = await axios.post(process.env.REACT_APP_BASE_URL + '/auth/login', user, {
+      const resp = await axios.post(process.env.REACT_APP_BASE_URL + '/auth/manager/login', user, {
         headers: {
           'accept': 'application/json',
           'Content-type': 'application/json',
