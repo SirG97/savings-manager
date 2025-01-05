@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import {
   Dialog,
@@ -35,7 +35,7 @@ import { Toaster } from "sonner";
 import { logoutUser } from "../../redux-store/AuthSlice";
 
 const userNavigation = [
-  { name: "Your profile", href: "#" },
+  // { name: "Your profile", href: "#" },
   { name: "Sign out", href: "#" },
 ];
 
@@ -48,6 +48,7 @@ export default function AppLayout({ children }) {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
   const [user, setUser] = useState([]);
   const [navigation, setNavigation] = useState([
     {
@@ -56,12 +57,12 @@ export default function AppLayout({ children }) {
       icon: HomeIcon,
       current: true,
     },
-    {
-      name: "Branches",
-      href: "/branches",
-      icon: Square3Stack3DIcon,
-      current: false,
-    },
+    // {
+    //   name: "Branches",
+    //   href: "/branches",
+    //   icon: Square3Stack3DIcon,
+    //   current: false,
+    // },
     {
       name: "Employees",
       href: "/employees",
@@ -129,7 +130,7 @@ export default function AppLayout({ children }) {
   }
 
   
-
+console.log(selector)
 
 
 
@@ -229,7 +230,7 @@ export default function AppLayout({ children }) {
         {/* Static sidebar for desktop */}
         <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
           {/* Sidebar component, swap this element with another sidebar if you like */}
-          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 pb-4">
+          <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center">
               <img
                 alt="Your Company"
@@ -333,7 +334,7 @@ export default function AppLayout({ children }) {
                         aria-hidden="true"
                         className="ml-4 text-sm/6 font-semibold text-gray-900"
                       >
-                        Tom Cook
+                       {selector?.name}
                       </span>
                       <ChevronDownIcon
                         aria-hidden="true"

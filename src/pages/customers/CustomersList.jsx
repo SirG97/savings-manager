@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { getCustomers } from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import numeral from "numeral";
 import LoadingIcon from "../../components/loaders/LoadingIcon";
@@ -14,7 +14,7 @@ numeral.defaultFormat("$0,0.00");
 export default function CustomersList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
   const [customers, setCustomers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -38,7 +38,7 @@ export default function CustomersList() {
 
   const fetchCustomers = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getCustomers(dispatch, undefined, { page, perPage })
+    getCustomers(dispatch, selector.branch_id, { page, perPage })
       .then((resp) => {
         if (resp?.data?.success) {
           setCustomers(resp?.data?.data?.data);

@@ -3,9 +3,10 @@ import { actionStart, actionSuccess, actionFailed } from "../redux-store/ActionS
 import axios from "axios"
 
 export const getEmployees = async (dispatch) => {
-    dispatch(actionStart())
+  dispatch(actionStart())
+  let user = JSON.parse(localStorage.getItem('userInfo'))
     try {
-      const resp = await axios.get(process.env.REACT_APP_BASE_URL + '/user/users/read/all', {
+      const resp = await axios.get(process.env.REACT_APP_BASE_URL + `/user/users/branch_read/${user.branch_id}/all`, {
         headers: {
             'accept': 'application/json',
             'content-type': 'application/json',

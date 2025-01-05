@@ -2,7 +2,7 @@ import { Modal } from "flowbite-react";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { TextInput } from "../../../components/inputs/TextInput";
 // import SelectInput from "../../../components/inputs/SelectInput";
 import { useForm } from "react-hook-form";
@@ -24,12 +24,13 @@ const schema = yup
       .string()
       // .matches(/(admin|marketer)/,"")
       .required("user type is required"),
-    branch_id: yup.string().required("Branch is required"),
+    // branch_id: yup.string().required("Branch is required"),
   })
   .required();
 
 export default function CreateEmployee({ active, onClose, onCreated }) {
   const dispatch = useDispatch();
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
   const [branches, setBranches] = useState([]);
   const {
     register,
@@ -86,7 +87,7 @@ export default function CreateEmployee({ active, onClose, onCreated }) {
 
   return (
     <>
-      <Toaster position="top-right" richColors />
+    
       <Modal show={active} size="md" onClose={onCloseModal} popup>
         <Modal.Header />
         <Modal.Body>
@@ -96,7 +97,7 @@ export default function CreateEmployee({ active, onClose, onCreated }) {
                 <h3 className="mb-3 pb-4 text-center text-xl font-medium text-gray-900 dark:text-white">
                   Create new employee
                 </h3>
-                <div className="">
+                {/* <div className="">
                   <Select
                     options={branches}
                     valueProp="id"
@@ -106,7 +107,7 @@ export default function CreateEmployee({ active, onClose, onCreated }) {
                     name="branch_id"
                     label="Branch"
                   />
-                </div>
+                </div> */}
                 <div className="">
                   <TextInput
                     label="First Name"
@@ -146,9 +147,9 @@ export default function CreateEmployee({ active, onClose, onCreated }) {
                 <div className="">
                   <Select
                     options={[
-                      { value: "admin", label: "Manager" },
+                      // { value: "admin", label: "Manager" },
                       { value: "marketer", label: "Marketer" },
-                      { value: "auditor", label: "Auditor" },
+                      // { value: "auditor", label: "Auditor" },
                     ]}
                     valueProp="value"
                     nameProp={(data) => data.label}

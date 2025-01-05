@@ -28,3 +28,22 @@ export const getPaymentMethod = (modelString) => {
 
   return modelMap[modelString] || "unknown";
 }
+
+export const getStatusColor = (modelString) => {
+  const modelMap = {
+    "cash": "error",
+    "bank": "primary"
+  };
+
+  return modelMap[modelString] || "unknown";
+}
+
+
+export const getStatusText = (modelString) => {
+  const modelMap = {
+    "cash": "error",
+    "bank": "primary"
+  };
+
+  return modelMap[modelString] || "unknown";
+}

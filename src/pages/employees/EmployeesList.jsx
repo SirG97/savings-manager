@@ -9,6 +9,7 @@ import numeral from "numeral";
 import LoadingIcon from "../../components/loaders/LoadingIcon";
 import EmptyState from "../../components/loaders/EmptyState";
 import StatusWithDot from "../../components/badges/StatusWithDot";
+import Status from '../../components/badges/Status'
 import { getModelType, getModelColor } from "../../utils/helper";
 
 numeral.defaultFormat("$0,0.00");
@@ -47,7 +48,7 @@ export default function EmployeesList() {
 
   return (
     <div className="mt-4 rounded-xl bg-white shadow-sm">
-      <Toaster />
+      
       <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
         <div className="sm:flex-auto">
           <h1 className="mt-1 text-base font-semibold text-gray-900">
@@ -78,12 +79,7 @@ export default function EmployeesList() {
                     Name
                   </th>
                 
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Branch
-                  </th>
+                  
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -135,9 +131,6 @@ export default function EmployeesList() {
                       </td>
 
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        {employee?.branch?.name ? employee?.branch?.name: '-'}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                         <StatusWithDot status={getModelColor(employee.model)} text={getModelType(employee.model)}/>
                       </td>
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
@@ -147,9 +140,7 @@ export default function EmployeesList() {
                       {employee?.phone}
                       </td>
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                          Active
-                        </span>
+                       <Status text={employee.suspended_at !== null ?'suspended':'active'} status={employee.suspended_at !== null ?'error':'success'}/>
                       </td>
 
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">

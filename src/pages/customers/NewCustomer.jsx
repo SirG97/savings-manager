@@ -12,7 +12,7 @@ import AppLayout from "../../components/layout/AppLayout";
 
 const schema = yup
   .object({
-    branch_id: yup.string().required("Branch is required"),
+    // branch_id: yup.string().required("Branch is required"),
     first_name: yup.string().required("First name is required"),
     surname: yup.string().required("Surname/Last name is required"),
     middle_name: yup.string(),
@@ -44,7 +44,7 @@ export default function NewCustomer() {
 
   useEffect(() => {
     fetchBranches();
-  });
+  },[]);
 
   const fetchBranches = () => {
     getBranches(dispatch)
@@ -67,7 +67,7 @@ export default function NewCustomer() {
       if (resp.data?.success) {
         console.log(data);
         reset({
-            branch_id: "",
+         
             first_name: "",
             surname: "",
             middle_name: "",
@@ -105,7 +105,7 @@ export default function NewCustomer() {
           <form onSubmit={handleSubmit(handleCreateCustomer)} className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2">
             <div className="px-4 py-6 sm:p-8">
               <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-6">
-                <div className="sm:col-span-6">
+                {/* <div className="sm:col-span-6">
                   <Select
                     options={branches}
                     required={true}
@@ -116,7 +116,7 @@ export default function NewCustomer() {
                     name="branch_id"
                     label="Branch"
                   />
-                </div>
+                </div> */}
                 <div className="sm:col-span-3">
                   <TextInput
                     label="First Name"
