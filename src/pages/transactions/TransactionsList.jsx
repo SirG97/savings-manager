@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { getCustomers, getTransactionByType } from "../../apis/Customers.js";
+import {
+  getCustomers,
+  getTransactionByType,
+  getTransactionByTypeAndBranchId,
+} from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import numeral from "numeral";
 import LoadingIcon from "../../components/loaders/LoadingIcon";
@@ -16,7 +20,7 @@ numeral.defaultFormat("$0,0.00");
 export default function TransactionsList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [customers, setCustomers] = useState([]);
   const [deposits, setDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -40,7 +44,10 @@ export default function TransactionsList() {
 
   const fetchCustomers = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByType(dispatch, "deposit", { page, perPage })
+    getTransactionByTypeAndBranchId(dispatch, selector.branch_id, "deposit", {
+      page,
+      perPage,
+    })
       .then((resp) => {
         if (resp?.data?.success) {
           console.log(resp?.data?.data?.data);
@@ -89,7 +96,7 @@ export default function TransactionsList() {
       <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
         <div className="sm:flex-auto">
           <h1 className="mt-4 text-base font-semibold text-gray-900">
-            Deposit History
+            Deposits
           </h1>
         </div>
         <div className="mt-4 sm:ml-16 sm:flex-none">
@@ -182,7 +189,8 @@ export default function TransactionsList() {
                         ₦{numeral(deposit?.amount).format("0,0.00")}
                       </td>
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        {deposit?.customer?.surname} {deposit?.customer?.first_name}
+                        {deposit?.customer?.surname}{" "}
+                        {deposit?.customer?.first_name}
                       </td>
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                         {deposit?.user?.name ? deposit?.user?.name : "-"}

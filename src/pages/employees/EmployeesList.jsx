@@ -41,7 +41,7 @@ export default function EmployeesList() {
       .catch((error) => {
         setIsLoading(false);
         toast.error("An error occurred. Try again!");
-        console.error("Error fetching Employees:", error);
+       
       });
   };
 

@@ -88,8 +88,6 @@ export const getTransactionByTypeAndBranchId = async (dispatch,branchId, type, p
   }
 };
 
-
-
 export const createCustomer = async (dispatch, data) => {
   dispatch(actionStart());
   try {
