@@ -39,7 +39,7 @@ export default function CommissionList() {
 
   const fetchDeposits = (page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByType(dispatch, "commission", { page, perPage })
+    getTransactionByTypeAndBranchId(dispatch, selector.branch_id, "commission", { page, perPage })
       .then((resp) => {
         if (resp?.data?.success) {
           console.log(resp?.data?.data?.data);

@@ -20,6 +20,7 @@
     "date-fns": "^4.1.0",
     "echarts": "^5.5.1",
     "echarts-for-react": "^3.0.2",
+    "env-cmd": "^10.1.0",
     "flowbite-react": "^0.10.2",
     "jwt-decode": "^4.0.0",
     "lodash": "^4.17.21",
@@ -41,6 +42,8 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "build:staging": "env-cmd -f .env.staging react-scripts build",
+    "build:production": "env-cmd -f .env.production react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
