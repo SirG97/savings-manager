@@ -42,7 +42,7 @@ jobs:
 
             # Pull latest code from the staging branch
             git fetch origin
-            git reset --hard origin/staging
+            git pull origin main
             
             
             echo "Deployment successful!"
