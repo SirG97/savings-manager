@@ -1,32 +1,39 @@
 import { useEffect, useState } from "react";
-import { PlusIcon } from "@heroicons/react/24/solid";
 import { Modal } from "flowbite-react";
-import { format, startOfYear, endOfYear } from "date-fns";
+import { useLocation, Link } from "react-router-dom";
+import { PlusIcon } from "@heroicons/react/24/solid";
+import { format } from "date-fns";
 import {
   getCustomers,
   getTransactionByType,
   getTransactionByTypeAndBranchId,
 } from "../../apis/Customers.js";
+
+import { getLoanApplicationsByUserId, getLoanApplicationsByCustomerId } from "../../apis/Loan.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import numeral from "numeral";
-import LoadingIcon from "../../components/loaders/LoadingIcon";
-import EmptyState from "../../components/loaders/EmptyState";
+import LoadingIcon from "../../components/loaders/LoadingIcon.jsx";
+import EmptyState from "../../components/loaders/EmptyState.jsx";
 import Pagination from "../../components/pagination/Pagination.jsx";
-import StatusWithDot from "../../components/badges/StatusWithDot";
-import { getPaymentMethod } from "../../utils/helper";
+import StatusWithDot from "../../components/badges/StatusWithDot.jsx";
+import { getModelColor, getPaymentMethod } from "../../utils/helper.js";
 
 numeral.defaultFormat("$0,0.00");
 
-export default function TransactionsList() {
+export default function CustomerLoanApplicationList({customer}) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
-  const [details, setDetails] = useState([]);
+  const location = useLocation();
   const [openModal, setOpenModal] = useState(false);
+
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
+  const [loanApplications, setLoanApplications] = useState([]);
+  const [loanApplication, setLoanApplication] = useState(null);
   const [deposits, setDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  // const [status, setStatus] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState({
     links: [],
@@ -42,19 +49,34 @@ export default function TransactionsList() {
 
   // Fetch customers whenever currentPage or per_page changes
   useEffect(() => {
-    fetchCustomers(currentPage, paginationData.meta.per_page);
-  }, [currentPage, paginationData.meta.per_page]);
+    const pathSegments = location.pathname.split("/");
+    const loanStatus = pathSegments.pop() || pathSegments.pop();
+    let status = null;
+    if (
+      loanStatus === "pending" ||
+      loanStatus === "approved" ||
+      loanStatus === "rejected" ||
+      loanStatus === "due" ||
+      loanStatus === "overdue" ||
+      loanStatus === "paid" ||
+      loanStatus === "completed"
+    ) {
+      status = loanStatus;
+    } else {
+      status = null;
+    }
+    fetchLoanApplications(status, currentPage, paginationData.meta.per_page);
+  }, [currentPage, paginationData.meta.per_page, location]);
 
-  const fetchCustomers = (page = 1, perPage = 10) => {
+  const fetchLoanApplications = (status, page = 1, perPage = 10) => {
     setIsLoading(true);
-    getTransactionByTypeAndBranchId(dispatch, selector.branch_id, "deposit", {
+    getLoanApplicationsByCustomerId(dispatch, customer.id, status,{
       page,
       perPage,
     })
       .then((resp) => {
         if (resp?.data?.success) {
-          console.log(resp?.data?.data?.data);
-          setDeposits(resp?.data?.data?.data);
+          setLoanApplications(resp?.data?.data?.data);
           setPaginationData({
             links: resp.data?.data?.links,
             meta: {
@@ -93,13 +115,18 @@ export default function TransactionsList() {
     }));
   };
 
+  function onCloseModal() {
+    setOpenModal(false);
+    setLoanApplication(null);
+  }
+
   return (
     <div className="mt-4 rounded-xl bg-white shadow-sm">
       <Toaster position="top-right" richColors />
       <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
         <div className="sm:flex-auto">
           <h1 className="mt-4 text-base font-semibold text-gray-900">
-            Deposits
+            Loan Applications
           </h1>
         </div>
         <div className="mt-4 sm:ml-16 sm:flex-none">
@@ -119,13 +146,7 @@ export default function TransactionsList() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="mr-3 bg-gray-100">
                 <tr className="">
-                  <th
-                    scope="col"
-                    className="py-3.5 pl-2 pr-1 text-left text-sm font-semibold text-gray-900 sm:pl-4"
-                  >
-                    Reference
-                  </th>
-
+                  
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -136,33 +157,39 @@ export default function TransactionsList() {
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Deposited for
+                    Interest
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Deposited by
+                    Duration
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Branch
+                    Payback Amount
                   </th>
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Payment method
+                    Amount remaining
                   </th>
-
-                  {/* <th
+                  <th
                     scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    className="px-3 py-3.5 text-center text-sm font-semibold text-gray-900"
                   >
                     Status
-                  </th> */}
+                  </th>
+
+                  <th
+                    scope="col"
+                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                  >
+                    Date
+                  </th>
 
                   <th
                     scope="col"
@@ -180,41 +207,61 @@ export default function TransactionsList() {
                     </td>
                   </tr>
                 </tbody>
-              ) : deposits.length > 0 ? (
+              ) : loanApplications.length > 0 ? (
                 <tbody className="divide-y divide-gray-200 bg-white pb-3">
-                  {deposits.map((deposit) => (
-                    <tr key={deposit.id}>
+                  {loanApplications.map((loanApplication) => (
+                    <tr key={loanApplication.id}>
+                    
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        {deposit?.reference}
+                        ₦{numeral(loanApplication?.amount).format("0,0.00")}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        ₦
+                        {numeral(loanApplication?.interest_amount).format(
+                          "0,0.00",
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        {loanApplication?.duration}{" "}
+                        {loanApplication?.duration == "1" ? "month" : "months"}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        ₦
+                        {numeral(loanApplication?.total_amount).format(
+                          "0,0.00",
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        ₦
+                        {numeral(loanApplication?.total_payable_amount).format(
+                          "0,0.00",
+                        )}
                       </td>
 
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        ₦{numeral(deposit?.amount).format("0,0.00")}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        {deposit?.customer?.surname}{" "}
-                        {deposit?.customer?.first_name}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        {deposit?.user?.name ? deposit?.user?.name : "-"}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        {deposit?.branch?.name ? deposit?.branch?.name : "-"}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                      <td className="whitespace-nowrap px-3 py-5 text-center text-sm text-gray-500">
                         <StatusWithDot
-                          status={getPaymentMethod(deposit.payment_method)}
-                          text={deposit.payment_method}
+                          status={getModelColor(loanApplication.status)}
+                          text={loanApplication.status}
                         />
                       </td>
-
+                      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        {format(
+                          loanApplication?.created_at,
+                          "yyyy-MM-dd hh:mm a",
+                        )}
+                      </td>
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
                         <button
-                          onClick={() => navigate(`/deposit/${deposit.id}`)}
+                          onClick={() => {
+                            setLoanApplication(loanApplication);
+                            setOpenModal(true);
+                          }}
                           className="cursor-pointer text-indigo-600 hover:text-indigo-900"
                         >
                           Details
-                          <span className="sr-only">,{deposit?.reference}</span>
+                          <span className="sr-only">
+                            ,{loanApplication?.id}
+                          </span>
                         </button>
                       </td>
                     </tr>
@@ -225,7 +272,7 @@ export default function TransactionsList() {
                   <tr>
                     <td colSpan="7">
                       <EmptyState
-                        text={"No customers yet. Create new customer"}
+                        text={"No Loans applications yet"}
                       />
                     </td>
                   </tr>
@@ -250,7 +297,7 @@ export default function TransactionsList() {
             <div>
               <div className="px-4 sm:px-0">
                 <h3 className="text-center text-base/7 font-semibold text-gray-900">
-                  Details
+                  Loan Details
                 </h3>
               </div>
               <div className="mt-6 border-t border-gray-100">
@@ -260,16 +307,8 @@ export default function TransactionsList() {
                       Customer name
                     </dt>
                     <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      {details?.customer?.surname}{" "}
-                      {details?.customer?.first_name}
-                    </dd>
-                  </div>
-                  <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm/6 font-medium text-gray-900">
-                      Reference
-                    </dt>
-                    <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      {details?.reference}
+                      {loanApplication?.customer?.surname}{" "}
+                      {loanApplication?.customer?.first_name}
                     </dd>
                   </div>
                   <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -277,91 +316,103 @@ export default function TransactionsList() {
                       Amount
                     </dt>
                     <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      ₦{numeral(details?.amount).format("0,0.00")}
+                      ₦{numeral(loanApplication?.amount).format("0,0.00")}
                     </dd>
                   </div>
 
                   <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt className="text-sm/6 font-medium text-gray-900">
-                      Amount before
+                      Interest Amount
                     </dt>
                     <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      ₦{numeral(details?.balance_before).format("0,0.00")}
+                      ₦
+                      {numeral(loanApplication?.interest_amount).format(
+                        "0,0.00",
+                      )}
                     </dd>
                   </div>
                   <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt className="text-sm/6 font-medium text-gray-900">
-                      Amount after
+                      Amount to payback
                     </dt>
                     <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      ₦{numeral(details?.balance_after).format("0,0.00")}
+                      ₦{numeral(loanApplication?.total_amount).format("0,0.00")}
                     </dd>
                   </div>
                   <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt className="text-sm/6 font-medium text-gray-900">
-                      Payment method
+                      Duration
+                    </dt>
+                    <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                      {loanApplication?.duration}
+                      {loanApplication?.duration == "1" ? "month" : "months"}
+                    </dd>
+                  </div>
+                  <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                    <dt className="text-sm/6 font-medium text-gray-900">
+                      Status
                     </dt>
                     <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                       <StatusWithDot
-                        status={getPaymentMethod(details?.payment_method)}
-                        text={details?.payment_method}
+                        status={getModelColor(loanApplication?.status)}
+                        text={loanApplication?.status}
                       />
                     </dd>
                   </div>
                   <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                     <dt className="text-sm/6 font-medium text-gray-900">
-                      Deposited by
+                      Applied by
                     </dt>
                     <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      {details?.user?.name}
+                      {loanApplication?.user?.name}
                     </dd>
                   </div>
-
-                  <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                    <dt className="text-sm/6 font-medium text-gray-900">
-                      Description
-                    </dt>
-                    <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                      {details?.description}
-                    </dd>
-                  </div>
-                  {details?.approved_at && (
+                  {loanApplication?.approved_at && (
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
-                        Date
+                        Date applied
                       </dt>
                       <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                        {format(details?.created_at, "yyyy-MM-dd hh:mm a")}
+                        {format(
+                          loanApplication?.created_at,
+                          "yyyy-MM-dd hh:mm a",
+                        )}
                       </dd>
                     </div>
                   )}
-                  {details?.approved_at && (
+                  {loanApplication?.approved_at && (
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
                         Date approved
                       </dt>
                       <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                        {format(details?.approved_at, "yyyy-MM-dd hh:mm a")}
+                        {format(
+                          loanApplication?.approved_at,
+                          "yyyy-MM-dd hh:mm a",
+                        )}
                       </dd>
                     </div>
                   )}
-                  {details?.rejected_at && (
+                  {loanApplication?.rejected_at && (
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
                         Date rejected
                       </dt>
                       <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                        {format(details?.approved_at, "yyyy-MM-dd hh:mm a")}
+                        {format(
+                          loanApplication?.approved_at,
+                          "yyyy-MM-dd hh:mm a",
+                        )}
                       </dd>
                     </div>
                   )}
-                  {details?.rejection_reason && (
+                  {loanApplication?.rejection_reason && (
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
                         Rejection reason
                       </dt>
                       <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                        {details?.rejection_reason}
+                        {loanApplication?.rejection_reason}
                       </dd>
                     </div>
                   )}
@@ -374,3 +425,4 @@ export default function TransactionsList() {
     </div>
   );
 }
+

@@ -17,7 +17,7 @@ import ButtonLoader from "../../components/loaders/ButtonLoader";
 
 const schema = yup
   .object({
-    branch_id: yup.string().required("Branch is required"),
+    // branch_id: yup.string().required("Branch is required"),
     first_name: yup.string().required("First name is required"),
     surname: yup.string().required("Surname/Last name is required"),
     middle_name: yup.string(),
@@ -50,7 +50,7 @@ export default function CustomerEdit() {
     resolver: yupResolver(schema),
     defaultValues: {
       id: id,
-      branch_id: "",
+      // branch_id: "",
       first_name: "",
       surname: "",
       middle_name: "",
@@ -119,7 +119,7 @@ export default function CustomerEdit() {
           const customerData = resp?.data?.data;
           // Prepopulate form fields
           reset({
-            branch_id: customerData.branch_id || "",
+            // branch_id: customerData.branch_id || "",
             user_id: customerData.user_id || "",
             first_name: customerData.first_name || "",
             surname: customerData.surname || "",
@@ -156,7 +156,7 @@ export default function CustomerEdit() {
               // Prepopulate form fields
               console.log(customerData);
               reset({
-                branch_id: customerData.branch_id || "",
+                // branch_id: customerData.branch_id || "",
                 user_id: customerData.user_id || "",
                 first_name: customerData.first_name || "",
                 surname: customerData.surname || "",
@@ -210,7 +210,7 @@ export default function CustomerEdit() {
           >
             <div className="px-4 py-6 sm:p-8">
               <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-6">
-                <div className="sm:col-span-3">
+                {/* <div className="sm:col-span-3">
                   <Select
                     options={branches}
                     required={true}
@@ -221,8 +221,8 @@ export default function CustomerEdit() {
                     name="branch_id"
                     label="Branch"
                   />
-                </div>
-                <div className="sm:col-span-3">
+                </div> */}
+                <div className="sm:col-span-6">
                   <Select
                     options={employees}
                     required={true}

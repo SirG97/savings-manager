@@ -88,6 +88,39 @@ export const getTransactionByTypeAndBranchId = async (dispatch,branchId, type, p
   }
 };
 
+export const getTransactionByTypeAndCustomerId = async (
+  dispatch,
+  customerId,
+  type,
+  params,
+) => {
+  dispatch(actionStart());
+  try {
+    const resp = await axios.get(
+      process.env.REACT_APP_BASE_URL +
+        `/user/customer_transaction/customer_read/${type}/${customerId}`,
+      {
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        params: {
+          page: params?.page,
+          size: params?.perPage,
+          startDate: params?.value?.startDate,
+          endDate: params?.value?.endDate,
+        },
+      },
+    );
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};
+
 export const createCustomer = async (dispatch, data) => {
   dispatch(actionStart());
   try {
@@ -175,3 +208,26 @@ export const createTransaction = async (dispatch, data) => {
     return err;
   }
 };
+
+
+export const searchCustomers = async (dispatch, query) => {
+  dispatch(actionStart());
+  try {
+    let url;
+
+    url = process.env.REACT_APP_BASE_URL + `/user/search/customer/${query}`;
+
+    const resp = await axios.get(url, {
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
+      },
+    });
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+}

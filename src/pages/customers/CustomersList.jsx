@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
-import { getCustomers } from "../../apis/Customers.js";
+import { getCustomers, searchCustomers } from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
+import {
+  ChevronDownIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/20/solid";
+import { debounce } from "lodash";
 import numeral from "numeral";
 import LoadingIcon from "../../components/loaders/LoadingIcon";
 import EmptyState from "../../components/loaders/EmptyState";
@@ -17,6 +22,7 @@ export default function CustomersList() {
   const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
   const [customers, setCustomers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState({
     links: [],
@@ -35,6 +41,36 @@ export default function CustomersList() {
     
     fetchCustomers(currentPage, paginationData.meta.per_page);
   }, [currentPage, paginationData.meta.per_page]);
+
+  const debouncedSearch = debounce((query) => {
+    if (query) {
+      setIsLoading(true);
+      searchCustomers(dispatch, query)
+        .then((resp) => {
+          if (resp?.data?.success) {
+            console.log(resp?.data.data)
+            setCustomers(resp?.data?.data);
+         
+            setIsLoading(false);
+          } else {
+            setIsLoading(false);
+            toast.error("An error occurred. Try again!");
+          }
+        })
+        .catch(() => {
+          setIsLoading(false);
+          toast.error("An error occurred. Try again!");
+        });
+    } else {
+      fetchCustomers(1, paginationData.meta.per_page);
+    }
+  }, 500);
+
+  useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, []);
 
   const fetchCustomers = (page = 1, perPage = 10) => {
     setIsLoading(true);
@@ -86,10 +122,37 @@ export default function CustomersList() {
     <div className="mt-4 rounded-xl bg-white shadow-sm">
       <Toaster position="top-right" richColors />
       <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
-        <div className="sm:flex-auto">
-          <h1 className="mt-4 text-base font-semibold text-gray-900">
-            Customers
-          </h1>
+      <div className="flex">
+          <div className="sm:flex">
+            <h1 className="mr-2 mt-5 text-base font-semibold text-gray-900">
+              Customers
+            </h1>
+          </div>
+          <div className="mt-4">
+            <label htmlFor="search" className="sr-only">
+              Search
+            </label>
+            <div className="relative">
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <MagnifyingGlassIcon
+                  aria-hidden="true"
+                  className="size-5 text-gray-400"
+                />
+              </div>
+              <input
+                id="search"
+                name="search"
+                type="search"
+                placeholder="Search"
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  debouncedSearch(e.target.value);
+                }}
+                className="block w-full rounded-lg border-0 bg-white py-2 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm/6"
+              />
+            </div>
+          </div>
         </div>
         <div className="sm:ml-16 mt-4 sm:flex-none">
           <button

@@ -26,6 +26,7 @@ import Transfer from './pages/transfers/Transfers';
 import Expenses from './pages/expenses/Exepenses';
 import CustomerDeductCommission from './pages/customers/CustomerDeductCommission';
 import ChangePassword from './pages/auth/ChangePassword';
+import LoanApplication from './pages/applications/LoanApplication';
 
 const App = () => {
     const dispatch = useDispatch()
@@ -96,6 +97,13 @@ const App = () => {
         <Route exact path="/transfers" element={<Transfer />} />
         <Route exact path="/expenses" element={<Expenses />} />
         <Route exact path="/loans" element={<Wallets />} />
+        <Route exact path="/loan-applications/pending" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/approved" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/rejected" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/due" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/overdue" element={<LoanApplication />} />
+        <Route exact path="/loan-applications/completed" element={<LoanApplication />} />
+        <Route exact path="/loan-applications" element={<LoanApplication />} />
         <Route exact path='*' element={<NotFoundContainer/>} />
         <Route exact path='auth/*' element={<AuthContainer />} />
       </Routes>

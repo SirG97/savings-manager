@@ -14,7 +14,11 @@ export const getModelColor = (modelString) => {
       "App\\Models\\SuperAdmin": "error",
       "App\\Models\\Admin": "warning",
       "App\\Models\\Auditor": "unknown",
-      "App\\Models\\Marketer": "primary"
+      "App\\Models\\Marketer": "primary",
+      "pending": "warning",
+      "approved": "success",
+      "rejected": "error",
+      "completed": "primary",
     };
   
     return modelMap[modelString] || "unknown";
