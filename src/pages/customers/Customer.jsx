@@ -87,7 +87,7 @@ export default function Customer() {
           </h2>
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
-          <span className="sm:block">
+          {/* <span className="sm:block">
             <button
               type="button"
               onClick={() => navigate(`/customer/${id}/loan/apply`)}
@@ -99,7 +99,7 @@ export default function Customer() {
               />
               Apply for loan
             </button>
-          </span>
+          </span> */}
           <span className="ml-2">
             <button
               type="button"
