@@ -34,7 +34,7 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-
+import logo from "../../assets/logos/profile.png"
 import { Toaster } from "sonner";
 
 import { logoutUser } from "../../redux-store/AuthSlice";
@@ -215,8 +215,8 @@ console.log(selector)
               <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
                 <div className="flex h-16 shrink-0 items-center">
                   <img
-                    alt="Your Company"
-                    src="https://tailwindui.com/plus/img/logos/mark.svg?color=white"
+                    alt="Divine Global"
+                    src={logo}
                     className="h-8 w-auto"
                   />
                 </div>
@@ -314,8 +314,8 @@ console.log(selector)
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center">
               <img
-                alt="Your Company"
-                src="https://tailwindui.com/plus/img/logos/mark.svg?color=white"
+                alt="Divine Global"
+                src={logo}
                 className="h-8 w-auto"
               />
             </div>
