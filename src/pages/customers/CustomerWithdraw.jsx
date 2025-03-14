@@ -78,6 +78,7 @@ export default function CustomerWithdraw() {
   };
 
   const handleCustomerDeposit = (data) => {
+    setIsLoading(true);
     data.customer_id = id;
 
     createTransaction(dispatch, data).then((resp) => {
@@ -94,6 +95,7 @@ export default function CustomerWithdraw() {
       } else {
         toast.error(resp.response.data.message);
       }
+      setIsLoading(false);
     });
   };
 

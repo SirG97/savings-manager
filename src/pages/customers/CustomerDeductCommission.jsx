@@ -77,7 +77,7 @@ export default function CustomerDeductCommission() {
 
   const handleDeductCommission = (data) => {
     data.customer_id = id;
-
+    setIsLoading(true);
     createTransaction(dispatch, data).then((resp) => {
       if (resp.data?.success) {
         reset({
@@ -92,6 +92,7 @@ export default function CustomerDeductCommission() {
       } else {
         toast.error(resp.response.data.message);
       }
+      setIsLoading(false);
     });
   };
 
