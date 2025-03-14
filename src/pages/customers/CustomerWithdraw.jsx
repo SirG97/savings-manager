@@ -10,6 +10,8 @@ import Select from "../../components/inputs/Select";
 import AppLayout from "../../components/layout/AppLayout";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
 import numeral from "numeral";
+import { TextInputDark } from "../../components/inputs/TextInputDark";
+import SelectDark from "../../components/inputs/SelectDark";
 
 const schema = yup
   .object({
@@ -76,6 +78,7 @@ export default function CustomerWithdraw() {
   };
 
   const handleCustomerDeposit = (data) => {
+    setIsLoading(true);
     data.customer_id = id;
 
     createTransaction(dispatch, data).then((resp) => {
@@ -92,6 +95,7 @@ export default function CustomerWithdraw() {
       } else {
         toast.error(resp.response.data.message);
       }
+      setIsLoading(false);
     });
   };
 
@@ -112,18 +116,18 @@ export default function CustomerWithdraw() {
 
           <form
             onSubmit={handleSubmit(handleCustomerDeposit)}
-            className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl md:col-span-2"
+            className="bg-gray-900 text-gray-100 shadow-sm ring-1 ring-gray-800 sm:rounded-xl md:col-span-2"
           >
             <div className="px-4 py-6 sm:p-8">
               <div className="grid max-w-2xl grid-cols-1 gap-x-6 gap-y-1 sm:grid-cols-6">
                 <div className="sm:col-span-6">
-                  <p className="text-md">
+                  <p className="text-md text-gray-300">
                     Customer: {customer?.surname} {customer?.first_name}
                   </p>
-                  <p className="text-md">
+                  <p className="text-md text-gray-300">
                     Staff Assigned: {customer?.user?.name}
                   </p>
-                  <p className="text-md">
+                  <p className="text-md text-gray-300">
                     Balance: ₦
                     {numeral(customer?.customer_wallet?.balance).format(
                       "0,0.00",
@@ -131,27 +135,29 @@ export default function CustomerWithdraw() {
                   </p>
                 </div>
                 <div className="sm:col-span-6">
-                  <TextInput
+                  <TextInputDark
                     label="Amount"
                     name="amount"
                     errors={errors.amount}
                     register={register}
                     required={true}
+                    className="border-gray-700 bg-gray-800 text-gray-100"
                   />
                 </div>
 
                 <div className="sm:col-span-6">
-                  <TextInput
+                  <TextInputDark
                     label="Description"
                     name="description"
                     errors={errors.description}
                     register={register}
                     required={true}
+                    className="border-gray-700 bg-gray-800 text-gray-100"
                   />
                 </div>
 
                 <div className="sm:col-span-3">
-                  <Select
+                  <SelectDark
                     options={[
                       { code: "cash", name: "cash" },
                       { code: "bank", name: "bank" },
@@ -163,25 +169,27 @@ export default function CustomerWithdraw() {
                     errors={errors.payment_method}
                     name="payment_method"
                     label="Payment method"
+                    className="border-gray-700 bg-gray-800 text-gray-100"
                   />
                 </div>
                 <div className="sm:col-span-3">
-                  <TextInput
+                  <TextInputDark
                     label="Date"
                     name="date"
                     type="date"
                     errors={errors.date}
                     register={register}
+                    className="border-gray-700 bg-gray-800 text-gray-100"
                   />
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
+            <div className="flex items-center justify-end gap-x-6 border-t border-gray-800 px-4 py-4 sm:px-8">
               <button
                 type="submit"
-                className="flex rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="flex rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                <span className="-pt-1">Save</span>
+                <span className="-pt-1">Withdraw</span>
                 {isLoading && (
                   <div>
                     <ButtonLoader className="pt-10" size={12} />
