@@ -87,6 +87,46 @@ export default function Customer() {
           </h2>
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
+        <span className="sm:block">
+            <button
+              type="button"
+              onClick={() => navigate(`/customer/${id}/edit`)}
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              <PencilIcon
+                aria-hidden="true"
+                className="-ml-0.5 mr-1.5 size-5 text-gray-400"
+              />
+              Edit Profile
+            </button>
+          </span>
+
+          <span className="ml-3">
+            <button
+              type="button"
+              onClick={() => navigate(`/customer/${id}/withdraw`)}
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              <LinkIcon
+                aria-hidden="true"
+                className="-ml-0.5 mr-1.5 size-5 text-gray-400"
+              />
+              Withdraw
+            </button>
+          </span>
+          <span className="ml-3">
+            <button
+              type="button"
+              onClick={() => navigate(`/customer/${id}/commission`)}
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              <TrophyIcon
+                aria-hidden="true"
+                className="-ml-0.5 mr-1.5 size-5 text-gray-400"
+              />
+              Commission
+            </button>
+          </span>
           {/* <span className="sm:block">
             <button
               type="button"
