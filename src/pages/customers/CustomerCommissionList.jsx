@@ -339,7 +339,7 @@ export default function CustomerCommissionList({customer}) {
                     </div>
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
-                        Deducted by
+                        Processed by
                       </dt>
                       <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                         {details?.user?.name}
@@ -359,7 +359,7 @@ export default function CustomerCommissionList({customer}) {
                     {details?.created_at && (
                       <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt className="text-sm/6 font-medium text-gray-900">
-                          Date approved
+                          Date 
                         </dt>
                         <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                           {format(details?.created_at, "yyyy-MM-dd hh:mm a")}

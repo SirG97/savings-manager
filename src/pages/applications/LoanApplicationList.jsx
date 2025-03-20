@@ -537,22 +537,7 @@ export default function LoanApplicationList() {
                   )}
                 </dl>
               </div>
-              <div className="flex space-x-2">
-                <Button
-                  loading={isLoading}
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-red-600 px-3 py-2.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Reject
-                </Button>
-                <Button
-                  loading={isLoading}
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Approve
-                </Button>
-              </div>
+             
             </div>
           </Modal.Body>
         </Modal>

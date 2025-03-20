@@ -21,7 +21,7 @@ import { getPaymentMethod } from "../../utils/helper.js";
 
 numeral.defaultFormat("$0,0.00");
 
-export default function CustomerDepositList({customer}) {
+export default function CustomerDepositList({ customer }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const currentDate = new Date();
@@ -117,10 +117,9 @@ export default function CustomerDepositList({customer}) {
               Deposits
             </h1>
           </div>
-          <div className=" sm:ml-16 sm:flex-none">
-            <div className="z-10 mx-1 flex  filter">
+          <div className="sm:ml-16 sm:flex-none">
+            <div className="z-10 mx-1 flex filter">
               <div className="mt-3 w-64">
-               
                 <Datepicker
                   showShortcuts={true}
                   value={value}
@@ -177,7 +176,7 @@ export default function CustomerDepositList({customer}) {
                     >
                       Amount
                     </th>
-                   
+
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -231,7 +230,7 @@ export default function CustomerDepositList({customer}) {
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           ₦{numeral(deposit?.amount).format("0,0.00")}
                         </td>
-                       
+
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           {deposit?.user?.name ? deposit?.user?.name : "-"}
                         </td>
@@ -268,9 +267,7 @@ export default function CustomerDepositList({customer}) {
                   <tbody>
                     <tr>
                       <td colSpan="7">
-                        <EmptyState
-                          text={"No Deposits yet"}
-                        />
+                        <EmptyState text={"No Deposits yet"} />
                       </td>
                     </tr>
                   </tbody>
@@ -283,7 +280,7 @@ export default function CustomerDepositList({customer}) {
             onPageChange={handlePageChange}
             onPageSizeChange={handlePageSizeChange}
           />
-                    <Modal
+          <Modal
             show={openModal}
             size="lg"
             popup
@@ -325,7 +322,6 @@ export default function CustomerDepositList({customer}) {
                       </dd>
                     </div>
 
-
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
                         Payment method
@@ -354,7 +350,6 @@ export default function CustomerDepositList({customer}) {
                         {details?.description}
                       </dd>
                     </div>
-
 
                     {details?.created_at && (
                       <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

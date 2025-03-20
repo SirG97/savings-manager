@@ -12,6 +12,7 @@ import ButtonLoader from "../../components/loaders/ButtonLoader";
 import numeral from "numeral";
 import { TextInputDark } from "../../components/inputs/TextInputDark";
 import SelectDark from "../../components/inputs/SelectDark";
+import Button from "../../components/buttons/Button";
 
 const schema = yup
   .object({
@@ -20,6 +21,10 @@ const schema = yup
       .number("Amount must be numeric")
       .min(100, "Amount can't be less than 100")
       .required("Amount name is required"),
+      commission: yup
+      .number("Amount must be numeric")
+      .min(100, "Amount can't be less than 100")
+      .notRequired(),
     payment_method: yup.string().required("Payment method is required"),
     description: yup.string("Description is required"),
   })
@@ -41,6 +46,7 @@ export default function CustomerWithdraw() {
       customer_id: id,
       transaction_type: "withdrawal",
       amount: "",
+      commission: 0,
       payment_method: "",
       description: "",
     },
@@ -86,6 +92,7 @@ export default function CustomerWithdraw() {
         reset({
           transaction_type: "deposit",
           amount: "",
+          commission:"",
           payment_method: "",
           description: "",
           date: "",
@@ -144,7 +151,16 @@ export default function CustomerWithdraw() {
                     className="border-gray-700 bg-gray-800 text-gray-100"
                   />
                 </div>
-
+                <div className="sm:col-span-6">
+                  <TextInputDark
+                    label="Commission Amount"
+                    name="commission"
+                    errors={errors.commission}
+                    register={register}
+                    required={true}
+                    className="border-gray-700 bg-gray-800 text-gray-100"
+                  />
+                </div>
                 <div className="sm:col-span-6">
                   <TextInputDark
                     label="Description"
@@ -185,17 +201,18 @@ export default function CustomerWithdraw() {
               </div>
             </div>
             <div className="flex items-center justify-end gap-x-6 border-t border-gray-800 px-4 py-4 sm:px-8">
-              <button
+              <Button
                 type="submit"
+                loading={isLoading}
                 className="flex rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <span className="-pt-1">Withdraw</span>
-                {isLoading && (
+                {/* {isLoading && (
                   <div>
                     <ButtonLoader className="pt-10" size={12} />
                   </div>
-                )}
-              </button>
+                )} */}
+              </Button>
             </div>
           </form>
         </div>

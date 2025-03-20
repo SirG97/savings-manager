@@ -10,6 +10,7 @@ import Select from "../../components/inputs/Select";
 import AppLayout from "../../components/layout/AppLayout";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
 import numeral from "numeral";
+import Button from "../../components/buttons/Button";
 
 const schema = yup
   .object({
@@ -175,17 +176,14 @@ export default function CustomerDeposit() {
               </div>
             </div>
             <div className="flex items-center justify-end gap-x-6 border-t border-gray-900/10 px-4 py-4 sm:px-8">
-              <button
+              <Button
                 type="submit"
+                loading={isLoading}
                 className="flex rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <span className="-pt-1">Save</span>
-                {isLoading && (
-                  <div>
-                    <ButtonLoader className="pt-10" size={12} />
-                  </div>
-                )}
-              </button>
+                
+              </Button>
             </div>
           </form>
         </div>

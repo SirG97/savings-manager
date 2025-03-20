@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { Modal } from "flowbite-react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { getCustomers, getTransactionByType, getTransactionByTypeAndBranchId } from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
+import { format, startOfYear, endOfYear } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import numeral from "numeral";
@@ -19,6 +21,8 @@ export default function CommissionList() {
   const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
   const [deposits, setDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [details, setDetails] = useState([]);
+  const [openModal, setOpenModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState({
     links: [],
@@ -198,7 +202,10 @@ export default function CommissionList() {
 
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
                         <button
-                          onClick={() => navigate(`/deposit/${deposit.id}`)}
+                          onClick={() => {
+                            setDetails(deposit);
+                            setOpenModal(true);
+                          }}
                           className="cursor-pointer text-indigo-600 hover:text-indigo-900"
                         >
                           Details
@@ -227,6 +234,94 @@ export default function CommissionList() {
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
         />
+         <Modal
+            show={openModal}
+            size="lg"
+            popup
+            onClose={() => setOpenModal(false)}
+          >
+            <Modal.Header />
+            <Modal.Body>
+              <div>
+                <div className="px-4 sm:px-0">
+                  <h3 className="text-center text-base/7 font-semibold text-gray-900">
+                    Details
+                  </h3>
+                </div>
+                <div className="mt-6 border-t border-gray-100">
+                  <dl className="divide-y divide-gray-100">
+                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                      <dt className="text-sm/6 font-medium text-gray-900">
+                        Customer name
+                      </dt>
+                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        {details?.customer?.surname}{" "}
+                        {details?.customer?.first_name}
+                      </dd>
+                    </div>
+                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                      <dt className="text-sm/6 font-medium text-gray-900">
+                        Reference
+                      </dt>
+                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        {details?.reference}
+                      </dd>
+                    </div>
+                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                      <dt className="text-sm/6 font-medium text-gray-900">
+                        Amount
+                      </dt>
+                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        ₦{numeral(details?.amount).format("0,0.00")}
+                      </dd>
+                    </div>
+
+                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                      <dt className="text-sm/6 font-medium text-gray-900">
+                        Payment method
+                      </dt>
+                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        <StatusWithDot
+                          status={getPaymentMethod(details?.payment_method)}
+                          text={details?.payment_method}
+                        />
+                      </dd>
+                    </div>
+                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                      <dt className="text-sm/6 font-medium text-gray-900">
+                        Deposited by
+                      </dt>
+                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        {details?.user?.name}
+                      </dd>
+                    </div>
+
+                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                      <dt className="text-sm/6 font-medium text-gray-900">
+                        Description
+                      </dt>
+                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        {details?.description}
+                      </dd>
+                    </div>
+
+                    {details?.created_at && (
+                      <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt className="text-sm/6 font-medium text-gray-900">
+                          Date
+                        </dt>
+                        <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                          {format(details?.created_at, "yyyy-MM-dd hh:mm a")}
+                        </dd>
+                      </div>
+                    )}
+                
+                   
+                  </dl>
+                </div>
+              </div>
+            </Modal.Body>
+          </Modal>
       </div>
     </div>
   );
