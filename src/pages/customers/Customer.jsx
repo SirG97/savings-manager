@@ -114,7 +114,7 @@ export default function Customer() {
               Withdraw
             </button>
           </span>
-          <span className="ml-3">
+          {/* <span className="ml-3">
             <button
               type="button"
               onClick={() => navigate(`/customer/${id}/commission`)}
@@ -126,7 +126,7 @@ export default function Customer() {
               />
               Commission
             </button>
-          </span>
+          </span> */}
           {/* <span className="sm:block">
             <button
               type="button"

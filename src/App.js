@@ -89,7 +89,7 @@ const App = () => {
         <Route exact path="/customer/:id/edit" element={<CustomerEdit />} />
         <Route exact path="/customer/:id/deposit" element={<CustomerDeposit />} />
         <Route exact path="/customer/:id/withdraw" element={<CustomerWithdraw />} />
-        <Route exact path="/customer/:id/commission" element={<CustomerDeductCommission/>} />
+        {/* <Route exact path="/customer/:id/commission" element={<CustomerDeductCommission/>} /> */}
         <Route exact path="/transactions" element={<Transactions />} />
         <Route exact path="/deposits" element={<Deposit />} />
         <Route exact path="/withdrawals" element={<Withdrawal />} />

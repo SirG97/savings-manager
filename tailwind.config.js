@@ -6,6 +6,7 @@ module.exports = {
     "./src/**/*.{html,js,jsx}",
     "./public/*.{html,js}",
     flowbite.content(),
+    "./node_modules/react-tailwindcss-datepicker/dist/index.esm.{js,ts}",
   ],
   theme: {
     extend: {

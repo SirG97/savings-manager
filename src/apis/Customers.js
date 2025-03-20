@@ -88,6 +88,34 @@ export const getTransactionByTypeAndBranchId = async (dispatch,branchId, type, p
   }
 };
 
+export const getCustomerTransactionByTypeAndBranchId = async (dispatch,branchId, type, params) => {
+  
+  dispatch(actionStart());
+  try {
+    const resp = await axios.get(
+      process.env.REACT_APP_BASE_URL + `/user/customer_transaction/branch_read/${type}/${branchId}`,
+      {
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+        params: {
+          page: params?.page,
+          size: params?.perPage,
+          startDate: params?.value?.startDate,
+          endDate: params?.value?.endDate,
+        },
+      },
+    );
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};
+
 export const getTransactionByTypeAndCustomerId = async (
   dispatch,
   customerId,

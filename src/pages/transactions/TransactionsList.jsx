@@ -210,7 +210,10 @@ export default function TransactionsList() {
 
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
                         <button
-                          onClick={() => navigate(`/deposit/${deposit.id}`)}
+                        onClick={() => {
+                          setDetails(deposit);
+                          setOpenModal(true);
+                        }}
                           className="cursor-pointer text-indigo-600 hover:text-indigo-900"
                         >
                           Details
@@ -250,7 +253,7 @@ export default function TransactionsList() {
             <div>
               <div className="px-4 sm:px-0">
                 <h3 className="text-center text-base/7 font-semibold text-gray-900">
-                  Details
+                  Deposit Details
                 </h3>
               </div>
               <div className="mt-6 border-t border-gray-100">
@@ -325,7 +328,7 @@ export default function TransactionsList() {
                       {details?.description}
                     </dd>
                   </div>
-                  {details?.approved_at && (
+                  {details?.created_at && (
                     <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                       <dt className="text-sm/6 font-medium text-gray-900">
                         Date
@@ -335,36 +338,7 @@ export default function TransactionsList() {
                       </dd>
                     </div>
                   )}
-                  {details?.approved_at && (
-                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                      <dt className="text-sm/6 font-medium text-gray-900">
-                        Date approved
-                      </dt>
-                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                        {format(details?.approved_at, "yyyy-MM-dd hh:mm a")}
-                      </dd>
-                    </div>
-                  )}
-                  {details?.rejected_at && (
-                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                      <dt className="text-sm/6 font-medium text-gray-900">
-                        Date rejected
-                      </dt>
-                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                        {format(details?.approved_at, "yyyy-MM-dd hh:mm a")}
-                      </dd>
-                    </div>
-                  )}
-                  {details?.rejection_reason && (
-                    <div className="px-4 py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                      <dt className="text-sm/6 font-medium text-gray-900">
-                        Rejection reason
-                      </dt>
-                      <dd className="mt-1 text-right text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-                        {details?.rejection_reason}
-                      </dd>
-                    </div>
-                  )}
+                 
                 </dl>
               </div>
             </div>
