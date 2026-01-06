@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { CheckIcon, LinkIcon, PencilIcon } from "@heroicons/react/20/solid";
 import { TrophyIcon } from "@heroicons/react/24/outline";
@@ -39,10 +39,15 @@ const tabs = [
 export default function Customer() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [customer, setCustomer] = useState([]);
   const [id, setId] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
+  const isLoanManager =
+    selector?.loan_manager === true ||
+    selector?.loan_manager === "1" ||
+    selector?.loan_manager === 1;
 
   useEffect(() => {
     fetchCustomer();
@@ -87,7 +92,7 @@ export default function Customer() {
           </h2>
         </div>
         <div className="mt-5 flex lg:ml-4 lg:mt-0">
-        <span className="sm:block">
+          <span className="sm:block">
             <button
               type="button"
               onClick={() => navigate(`/customer/${id}/edit`)}
@@ -101,7 +106,7 @@ export default function Customer() {
             </button>
           </span>
 
-          <span className="ml-3">
+          <span className="ml-2">
             <button
               type="button"
               onClick={() => navigate(`/customer/${id}/withdraw`)}
@@ -127,19 +132,21 @@ export default function Customer() {
               Commission
             </button>
           </span> */}
-          {/* <span className="sm:block">
-            <button
-              type="button"
-              onClick={() => navigate(`/customer/${id}/loan/apply`)}
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              <PencilIcon
-                aria-hidden="true"
-                className="-ml-0.5 mr-1.5 size-5 text-gray-400"
-              />
-              Apply for loan
-            </button>
-          </span> */}
+          {isLoanManager && (
+            <span className="ml-2 sm:block">
+              <button
+                type="button"
+                onClick={() => navigate(`/customer/${id}/loan/apply`)}
+                className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+              >
+                <PencilIcon
+                  aria-hidden="true"
+                  className="-ml-0.5 mr-1.5 size-5 text-gray-400"
+                />
+                Apply for loan
+              </button>
+            </span>
+          )}
           <span className="ml-2">
             <button
               type="button"

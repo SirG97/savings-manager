@@ -114,7 +114,7 @@ export default function CustomerLoanTransactionList({customer}) {
         <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
           <div className="sm:flex-auto">
             <h1 className="mt-4 text-base font-semibold text-gray-900">
-              Deposits
+              Loan Transactions
             </h1>
           </div>
           <div className=" sm:ml-16 sm:flex-none">
@@ -177,7 +177,12 @@ export default function CustomerLoanTransactionList({customer}) {
                     >
                       Amount
                     </th>
-                   
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      Type
+                    </th>
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -231,7 +236,12 @@ export default function CustomerLoanTransactionList({customer}) {
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           ₦{numeral(deposit?.amount).format("0,0.00")}
                         </td>
-                       
+                        <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                        <StatusWithDot
+                            status={deposit.type == 'credit' ? 'primary' : 'success'}
+                            text={deposit.type== 'credit' ? 'Loan Credit' : 'Loan Payback'}
+                          />
+                        </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           {deposit?.user?.name ? deposit?.user?.name : "-"}
                         </td>

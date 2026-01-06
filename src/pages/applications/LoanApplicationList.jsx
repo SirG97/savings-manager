@@ -68,7 +68,11 @@ export default function LoanApplicationList() {
     if (!loanApplication) return;
 
     setIsApproving(true);
-    approveLoan(dispatch, { id: loanApplication.id, status: "approved", payment_method: data.payment_method })
+    approveLoan(dispatch, {
+      id: loanApplication.id,
+      status: "approved",
+      payment_method: data.payment_method,
+    })
       .then((resp) => {
         if (resp?.data?.success) {
           toast.success("Loan approved successfully");
@@ -134,6 +138,10 @@ export default function LoanApplicationList() {
   const [isLoading, setIsLoading] = useState(false);
   const [isApproving, setIsApproving] = useState(false);
   const [isRejecting, setIsRejecting] = useState(false);
+  const isLoanManager =
+    selector?.loan_manager === true ||
+    selector?.loan_manager === "1" ||
+    selector?.loan_manager === 1;
   // const [status, setStatus] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState({
@@ -359,30 +367,31 @@ export default function LoanApplicationList() {
                           >
                             View
                           </button>
-                          {loanApplication.status == "pending" && (
-                            <>
-                              <button
-                                onClick={() => {
-                                  setLoanApplication(loanApplication);
-                                  setOpenApproveModal(true);
-                                }}
-                                type="button"
-                                className="relative mx-1.5 -ml-px inline-flex cursor-pointer items-center rounded-md bg-green-600 px-2 py-1 text-sm font-semibold text-white ring-1 hover:bg-green-800 focus:z-10"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => {
-                                  setLoanApplication(loanApplication);
-                                  setOpenRejectModal(true);
-                                }}
-                                type="button"
-                                className="relative mx-1 -ml-px inline-flex cursor-pointer items-center rounded-md bg-red-600 px-2 py-1 text-sm font-semibold text-white hover:bg-red-800 focus:z-10"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
+                          {loanApplication.status == "pending" &&
+                            isLoanManager && (
+                              <>
+                                <button
+                                  onClick={() => {
+                                    setLoanApplication(loanApplication);
+                                    setOpenApproveModal(true);
+                                  }}
+                                  type="button"
+                                  className="relative mx-1.5 -ml-px inline-flex cursor-pointer items-center rounded-md bg-green-600 px-2 py-1 text-sm font-semibold text-white ring-1 hover:bg-green-800 focus:z-10"
+                                >
+                                  Approve
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    setLoanApplication(loanApplication);
+                                    setOpenRejectModal(true);
+                                  }}
+                                  type="button"
+                                  className="relative mx-1 -ml-px inline-flex cursor-pointer items-center rounded-md bg-red-600 px-2 py-1 text-sm font-semibold text-white hover:bg-red-800 focus:z-10"
+                                >
+                                  Reject
+                                </button>
+                              </>
+                            )}
                         </span>
                       </td>
                     </tr>
@@ -537,7 +546,6 @@ export default function LoanApplicationList() {
                   )}
                 </dl>
               </div>
-             
             </div>
           </Modal.Body>
         </Modal>

@@ -318,7 +318,8 @@ export default function CommissionList() {
                 
                    
                   </dl>
-                </div>
+              </div>
+              
               </div>
             </Modal.Body>
           </Modal>

@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import Authlayout from "../../components/layout/AuthLayout";
 import { loginUser } from "../../apis/Authentication";
+import Button from "../../components/buttons/Button";
 import {
   setUserInfo,
   setUserToken,
@@ -14,6 +16,7 @@ export default function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const selector = useSelector((state) => state.auth)
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -22,7 +25,9 @@ export default function Login() {
   } = useForm();
 
   const handleLogin = (data) => {
+    setIsLoading(true);
     loginUser(dispatch, data).then((resp) => {
+      console.log(resp)
       if (resp?.data?.status === "success") {
         let user = resp.data?.data.user;
         console.log(user)
@@ -39,6 +44,7 @@ export default function Login() {
         }
         navigate("/");
       } else {
+        setIsLoading(false);
         toast.error(resp.response?.data?.data?.message);
       }
     });
@@ -95,12 +101,15 @@ export default function Login() {
               </div>
 
               <div>
-                <button
-                  type="submit"
-                  className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Sign in
-                </button>
+              <Button
+                type="submit"
+                loading={isLoading}
+                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2.5 text-sm/6 font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                <span className="-pt-1">Login</span>
+                
+              </Button>
+               
               </div>
             </form>
           </div>
