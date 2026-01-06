@@ -221,6 +221,7 @@ export default function CustomerLoanApplicationList({customer}) {
                           "0,0.00",
                         )}
                       </td>
+                     
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                         {loanApplication?.duration}{" "}
                         {loanApplication?.duration == "1" ? "month" : "months"}

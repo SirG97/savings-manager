@@ -183,6 +183,7 @@ export default function CustomerLoanTransactionList({customer}) {
                     >
                       Type
                     </th>
+                   
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -236,12 +237,13 @@ export default function CustomerLoanTransactionList({customer}) {
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           ₦{numeral(deposit?.amount).format("0,0.00")}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        <StatusWithDot
-                            status={deposit.type == 'credit' ? 'primary' : 'success'}
-                            text={deposit.type== 'credit' ? 'Loan Credit' : 'Loan Payback'}
-                          />
-                        </td>
+                        <td className="whitespace-nowrap px-3 py-5 text-left text-sm text-gray-500">
+                        
+                          <StatusWithDot
+                          status={deposit.type == 'credit' ? 'primary' : 'success'}
+                          text={deposit.type == 'credit' ? 'Disbursement' : 'Repayment'}
+                        />
+                      </td>
                         <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                           {deposit?.user?.name ? deposit?.user?.name : "-"}
                         </td>

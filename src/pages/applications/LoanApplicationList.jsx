@@ -273,6 +273,7 @@ export default function LoanApplicationList() {
                   >
                     Interest
                   </th>
+                 
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -332,6 +333,7 @@ export default function LoanApplicationList() {
                           "0,0.00",
                         )}
                       </td>
+                     
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                         {loanApplication?.duration}{" "}
                         {loanApplication?.duration == "1" ? "month" : "months"}
