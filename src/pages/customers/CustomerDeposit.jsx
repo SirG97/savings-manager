@@ -3,6 +3,8 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { TextInput } from "../../components/inputs/TextInput";
 import { getCustomer, createTransaction } from "../../apis/Customers";
 import { toast } from "sonner";
@@ -11,6 +13,7 @@ import AppLayout from "../../components/layout/AppLayout";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
 import numeral from "numeral";
 import Button from "../../components/buttons/Button";
+import { Modal } from "flowbite-react";
 
 const schema = yup
   .object({
@@ -26,9 +29,12 @@ const schema = yup
 
 export default function CustomerDeposit() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [id, setId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [customer, setCustomer] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [formDataToConfirm, setFormDataToConfirm] = useState(null);
   const {
     register,
     handleSubmit,
@@ -77,36 +83,72 @@ export default function CustomerDeposit() {
   };
 
   const handleCustomerDeposit = (data) => {
+    // Store form data and show confirmation modal
+    setFormDataToConfirm(data);
+    setShowConfirmModal(true);
+  };
+
+  const confirmAndSubmit = () => {
+    if (!formDataToConfirm) return;
+
+    setIsLoading(true);
+    const data = { ...formDataToConfirm };
     data.customer_id = id;
 
-    createTransaction(dispatch, data).then((resp) => {
-      if (resp.data?.success) {
-        reset({
-          transaction_type: "deposit",
-          amount: "",
-          payment_method: "",
-          description: "",
-          date: "",
-        });
-        fetchCustomer(id);
-        toast.success(resp?.data.message);
-      } else {
-        toast.error(resp.response.data.message);
-      }
-    });
+    createTransaction(dispatch, data)
+      .then((resp) => {
+        if (resp.data?.success) {
+          reset({
+            transaction_type: "deposit",
+            amount: "",
+            payment_method: "",
+            description: "",
+            date: "",
+          });
+          fetchCustomer(id);
+          toast.success(resp?.data.message);
+          setShowConfirmModal(false);
+          setFormDataToConfirm(null);
+        } else {
+          toast.error(resp.response.data.message);
+        }
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
     <AppLayout>
-      <div className="space-y-10 divide-y divide-gray-900/10">
+      <div className="space-y-10  divide-gray-900/10">
         {/* <Toaster position="top-right" richColors /> */}
-        <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-10 md:grid-cols-3">
+        <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              <ArrowLeftIcon
+                aria-hidden="true"
+                className="-ml-0.5 mr-1.5 size-5 text-gray-400"
+              />
+              Back
+            </button>
+        <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-0 md:grid-cols-3">
+          
           <div className="px-4 sm:px-0">
-            <h2 className="text-base/7 font-semibold text-gray-900">Deposit</h2>
-            <p className="mt-1 text-sm/6 text-gray-600">
-              Enter the amount you want to withdraw for customer. All fields
-              marked asterisk(*) are required
-            </p>
+   
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-base/7 font-semibold text-gray-900">
+                  Deposit
+                </h2>
+                <p className="mt-1 text-sm/6 text-gray-600">
+                  Enter the amount you want to withdraw for customer. All fields
+                  marked asterisk(*) are required
+                </p>
+              </div>
+            </div>
           </div>
 
           <form
@@ -182,12 +224,105 @@ export default function CustomerDeposit() {
                 className="flex rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 <span className="-pt-1">Save</span>
-                
               </Button>
             </div>
           </form>
         </div>
       </div>
+
+      {/* Confirmation Modal */}
+      <Modal
+        show={showConfirmModal}
+        size="md"
+        popup
+        onClose={() => {
+          setShowConfirmModal(false);
+          setFormDataToConfirm(null);
+        }}
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="space-y-4">
+            <div className="text-center">
+              <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                Confirm Deposit
+              </h3>
+              <p className="mb-4 text-sm text-gray-600">
+                Please review the details below before confirming this deposit.
+              </p>
+            </div>
+
+            <div className="border-t border-gray-200 pt-4">
+              <dl className="divide-y divide-gray-200">
+                <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt className="text-sm font-medium text-gray-900">
+                    Customer
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
+                    {customer?.surname} {customer?.first_name}
+                  </dd>
+                </div>
+
+                <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt className="text-sm font-medium text-gray-900">Amount</dt>
+                  <dd className="mt-1 text-sm font-semibold text-gray-900 sm:col-span-2 sm:mt-0">
+                    ₦
+                    {formDataToConfirm?.amount
+                      ? numeral(formDataToConfirm.amount).format("0,0.00")
+                      : "0.00"}
+                  </dd>
+                </div>
+
+                <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt className="text-sm font-medium text-gray-900">
+                    Payment Method
+                  </dt>
+                  <dd className="mt-1 text-sm capitalize text-gray-700 sm:col-span-2 sm:mt-0">
+                    {formDataToConfirm?.payment_method || "-"}
+                  </dd>
+                </div>
+
+                <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                  <dt className="text-sm font-medium text-gray-900">
+                    Description
+                  </dt>
+                  <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
+                    {formDataToConfirm?.description || "-"}
+                  </dd>
+                </div>
+
+                {formDataToConfirm?.date && (
+                  <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt className="text-sm font-medium text-gray-900">Date</dt>
+                    <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
+                      {formDataToConfirm.date}
+                    </dd>
+                  </div>
+                )}
+              </dl>
+            </div>
+
+            <div className="flex gap-3 space-x-2 pt-4">
+              <Button
+                onClick={() => {
+                  setShowConfirmModal(false);
+                  setFormDataToConfirm(null);
+                }}
+                className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-300"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={confirmAndSubmit}
+                loading={isLoading}
+                className="flex-1 rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+              >
+                Confirm & Submit
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </AppLayout>
   );
 }

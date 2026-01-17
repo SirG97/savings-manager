@@ -3,13 +3,13 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import CreateEmployee from "./modals/CreateEmployee";
 import { getEmployees } from "../../apis/Employees";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Toaster, toast } from "sonner";
 import numeral from "numeral";
 import LoadingIcon from "../../components/loaders/LoadingIcon";
 import EmptyState from "../../components/loaders/EmptyState";
 import StatusWithDot from "../../components/badges/StatusWithDot";
-import Status from '../../components/badges/Status'
+import Status from "../../components/badges/Status";
 import { getModelType, getModelColor } from "../../utils/helper";
 
 numeral.defaultFormat("$0,0.00");
@@ -17,15 +17,18 @@ numeral.defaultFormat("$0,0.00");
 export default function EmployeesList() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [openBranchModal, setOpenBranchModal] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const isLoanManager =
+    selector?.loan_manager === true ||
+    selector?.loan_manager === "1" ||
+    selector?.loan_manager === 1;
 
   useEffect(() => {
-
     fetchLatestEmployees();
-  
-  },[]);
+  }, []);
 
   const fetchLatestEmployees = () => {
     setIsLoading(true);
@@ -41,14 +44,11 @@ export default function EmployeesList() {
       .catch((error) => {
         setIsLoading(false);
         toast.error("An error occurred. Try again!");
-       
       });
   };
 
-
   return (
     <div className="mt-4 rounded-xl bg-white shadow-sm">
-      
       <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
         <div className="sm:flex-auto">
           <h1 className="mt-1 text-base font-semibold text-gray-900">
@@ -56,14 +56,16 @@ export default function EmployeesList() {
           </h1>
         </div>
         <div className="sm:ml-16 sm:mt-4 sm:flex-none">
-          <button
-            type="button"
-            onClick={() => setOpenBranchModal(true)}
-            className="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            <PlusIcon aria-hidden="true" className="-ml-0.5 size-5" />
-            Add Employee
-          </button>
+          {!isLoanManager && (
+            <button
+              type="button"
+              onClick={() => setOpenBranchModal(true)}
+              className="ml-3 inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              <PlusIcon aria-hidden="true" className="-ml-0.5 size-5" />
+              Add Employee
+            </button>
+          )}
         </div>
       </div>
       <div className="mt-6 flow-root">
@@ -78,8 +80,7 @@ export default function EmployeesList() {
                   >
                     Name
                   </th>
-                
-                  
+
                   <th
                     scope="col"
                     className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
@@ -131,16 +132,28 @@ export default function EmployeesList() {
                       </td>
 
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                        <StatusWithDot status={getModelColor(employee.model)} text={getModelType(employee.model)}/>
+                        <StatusWithDot
+                          status={getModelColor(employee.model)}
+                          text={getModelType(employee.model)}
+                        />
                       </td>
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                      {employee?.email}
+                        {employee?.email}
                       </td>
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                      {employee?.phone}
+                        {employee?.phone}
                       </td>
                       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                       <Status text={employee.suspended_at !== null ?'suspended':'active'} status={employee.suspended_at !== null ?'error':'success'}/>
+                        <Status
+                          text={
+                            employee.suspended_at !== null
+                              ? "suspended"
+                              : "active"
+                          }
+                          status={
+                            employee.suspended_at !== null ? "error" : "success"
+                          }
+                        />
                       </td>
 
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
@@ -148,7 +161,8 @@ export default function EmployeesList() {
                           onClick={() => navigate(`/employee/${employee.id}`)}
                           className="cursor-pointer text-indigo-600 hover:text-indigo-900"
                         >
-                          Details<span className="sr-only">,{employee?.name}</span>
+                          Details
+                          <span className="sr-only">,{employee?.name}</span>
                         </button>
                       </td>
                     </tr>
@@ -158,7 +172,9 @@ export default function EmployeesList() {
                 <tbody>
                   <tr>
                     <td colSpan="7">
-                      <EmptyState text={"No Employees yet. Create new branch"} />
+                      <EmptyState
+                        text={"No Employees yet. Create new branch"}
+                      />
                     </td>
                   </tr>
                 </tbody>

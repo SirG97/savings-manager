@@ -34,7 +34,7 @@ import {
   ChevronRightIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import logo from "../../assets/logos/profile.png"
+import logo from "../../assets/logos/profile.png";
 import { Toaster } from "sonner";
 
 import { logoutUser } from "../../redux-store/AuthSlice";
@@ -50,10 +50,10 @@ function classNames(...classes) {
 
 export default function AppLayout({ children }) {
   const location = useLocation();
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const selector = JSON.parse(useSelector((state) => state.auth.userInfo))
+  const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [user, setUser] = useState([]);
   const [navigation, setNavigation] = useState([
     {
@@ -172,10 +172,7 @@ export default function AppLayout({ children }) {
     navigate("/auth/login");
   }
 
-  
-console.log(selector)
-
-
+  console.log(selector);
 
   return (
     <>
@@ -214,11 +211,7 @@ console.log(selector)
               {/* Sidebar component, swap this element with another sidebar if you like */}
               <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
                 <div className="flex h-16 shrink-0 items-center">
-                  <img
-                    alt="Divine Global"
-                    src={logo}
-                    className="h-8 w-auto"
-                  />
+                  <img alt="Divine Global" src={logo} className="h-8 w-auto" />
                 </div>
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -313,11 +306,7 @@ console.log(selector)
           {/* Sidebar component, swap this element with another sidebar if you like */}
           <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-gray-900 px-6 pb-4">
             <div className="flex h-16 shrink-0 items-center">
-              <img
-                alt="Divine Global"
-                src={logo}
-                className="h-8 w-auto"
-              />
+              <img alt="Divine Global" src={logo} className="h-8 w-auto" />
             </div>
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
@@ -366,7 +355,6 @@ console.log(selector)
                                 <li key={subItem.name}>
                                   {/* 44px */}
                                   <Link
-                                    
                                     to={subItem.href}
                                     className={classNames(
                                       subItem.current
@@ -450,7 +438,7 @@ console.log(selector)
                         aria-hidden="true"
                         className="ml-4 text-sm/6 font-semibold text-gray-900"
                       >
-                       {selector?.name}
+                        {selector?.name}
                       </span>
                       <ChevronDownIcon
                         aria-hidden="true"
@@ -464,12 +452,21 @@ console.log(selector)
                   >
                     {userNavigation.map((item) => (
                       <MenuItem key={item.name}>
-                        <a
-                          href={item.href}
-                          className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
-                        >
-                          {item.name}
-                        </a>
+                        {item.name === "Sign out" ? (
+                          <button
+                            onClick={handleLogout}
+                            className="block w-full px-3 py-1 text-left text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
+                          >
+                            {item.name}
+                          </button>
+                        ) : (
+                          <a
+                            href={item.href}
+                            className="block px-3 py-1 text-sm/6 text-gray-900 data-[focus]:bg-gray-50 data-[focus]:outline-none"
+                          >
+                            {item.name}
+                          </a>
+                        )}
                       </MenuItem>
                     ))}
                   </MenuItems>

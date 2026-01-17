@@ -88,7 +88,7 @@ export default function CommissionList() {
 
   return (
     <div className="mt-4 rounded-xl bg-white shadow-sm">
-      <Toaster position="top-right" richColors />
+      <Toaster duration={5000} position="top-right" richColors />
       <div className="flex justify-between px-4 py-2 sm:items-center sm:px-6 lg:px-4">
         <div className="sm:flex-auto">
           <h1 className="mt-4 text-base font-semibold text-gray-900">
