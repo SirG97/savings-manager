@@ -6,7 +6,6 @@ import {
 import axios from "axios";
 
 export const getCustomers = async (dispatch, id = undefined, params) => {
-  
   dispatch(actionStart());
   try {
     let url;
@@ -15,19 +14,17 @@ export const getCustomers = async (dispatch, id = undefined, params) => {
     } else {
       url = process.env.REACT_APP_BASE_URL + `/user/customer/read`;
     }
-    const resp = await axios.get(url,
-      {
-        headers: {
-          accept: "application/json",
-          "content-type": "application/json",
-          Authorization: "Bearer " + localStorage.getItem("token"),
-        },
-        params: {
-          page: params?.page,
-          size: params?.perPage,
-        },
+    const resp = await axios.get(url, {
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        Authorization: "Bearer " + localStorage.getItem("token"),
       },
-    );
+      params: {
+        page: params?.page,
+        size: params?.perPage,
+      },
+    });
     dispatch(actionSuccess());
     return resp;
   } catch (err) {
@@ -37,7 +34,6 @@ export const getCustomers = async (dispatch, id = undefined, params) => {
 };
 
 export const getTransactionByType = async (dispatch, type, params) => {
-  
   dispatch(actionStart());
   try {
     const resp = await axios.get(
@@ -62,12 +58,17 @@ export const getTransactionByType = async (dispatch, type, params) => {
   }
 };
 
-export const getTransactionByTypeAndBranchId = async (dispatch,branchId, type, params) => {
-  
+export const getTransactionByTypeAndBranchId = async (
+  dispatch,
+  branchId,
+  type,
+  params,
+) => {
   dispatch(actionStart());
   try {
     const resp = await axios.get(
-      process.env.REACT_APP_BASE_URL + `/user/transaction/branch_read/${type}/${branchId}`,
+      process.env.REACT_APP_BASE_URL +
+        `/user/transaction/branch_read/${type}/${branchId}`,
       {
         headers: {
           accept: "application/json",
@@ -88,12 +89,17 @@ export const getTransactionByTypeAndBranchId = async (dispatch,branchId, type, p
   }
 };
 
-export const getCustomerTransactionByTypeAndBranchId = async (dispatch,branchId, type, params) => {
-  
+export const getCustomerTransactionByTypeAndBranchId = async (
+  dispatch,
+  branchId,
+  type,
+  params,
+) => {
   dispatch(actionStart());
   try {
     const resp = await axios.get(
-      process.env.REACT_APP_BASE_URL + `/user/customer_transaction/branch_read/${type}/${branchId}`,
+      process.env.REACT_APP_BASE_URL +
+        `/user/customer_transaction/branch_read/${type}/${branchId}`,
       {
         headers: {
           accept: "application/json",
@@ -172,7 +178,6 @@ export const createCustomer = async (dispatch, data) => {
 };
 
 export const getCustomer = async (dispatch, id) => {
-  
   dispatch(actionStart());
   try {
     const resp = await axios.get(
@@ -237,7 +242,6 @@ export const createTransaction = async (dispatch, data) => {
   }
 };
 
-
 export const searchCustomers = async (dispatch, query) => {
   dispatch(actionStart());
   try {
@@ -258,4 +262,27 @@ export const searchCustomers = async (dispatch, query) => {
     dispatch(actionFailed());
     return err;
   }
-}
+};
+
+export const reverseTransaction = async (dispatch, transactionId) => {
+  dispatch(actionStart());
+  try {
+    const resp = await axios.post(
+      process.env.REACT_APP_BASE_URL +
+        `/user/customer_transaction/reverse/${transactionId}`,
+      {},
+      {
+        headers: {
+          accept: "application/json",
+          "content-type": "application/json",
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      },
+    );
+    dispatch(actionSuccess());
+    return resp;
+  } catch (err) {
+    dispatch(actionFailed());
+    return err;
+  }
+};

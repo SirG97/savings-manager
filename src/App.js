@@ -24,6 +24,7 @@ import Customer from "./pages/customers/Customer";
 import CustomerEdit from "./pages/customers/CustomerEdit";
 import CustomerDeposit from "./pages/customers/CustomerDeposit";
 import CustomerWithdraw from "./pages/customers/CustomerWithdraw";
+import CustomerReversal from "./pages/customers/CustomerReversal";
 import Deposit from "./pages/deposit/Deposit";
 import Withdrawal from "./pages/withdrawals/Withdrawal";
 import Commission from "./pages/commissions/Commission";
@@ -33,6 +34,7 @@ import CustomerDeductCommission from "./pages/customers/CustomerDeductCommission
 import ChangePassword from "./pages/auth/ChangePassword";
 import LoanApplication from "./pages/applications/LoanApplication";
 import CustomerLoanApplication from "./pages/customers/CustomerLoanApplication";
+import ReversalsList from "./pages/transactions/ReversalsList";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -104,8 +106,14 @@ const App = () => {
           path="/customer/:id/loan/apply"
           element={<CustomerLoanApplication />}
         />
+        <Route
+          exact
+          path="/customer/:id/reversal"
+          element={<CustomerReversal />}
+        />
         {/* <Route exact path="/customer/:id/commission" element={<CustomerDeductCommission/>} /> */}
         <Route exact path="/transactions" element={<Transactions />} />
+        <Route exact path="/reversals" element={<ReversalsList />} />
         <Route exact path="/deposits" element={<Deposit />} />
         <Route exact path="/withdrawals" element={<Withdrawal />} />
         <Route exact path="/commissions" element={<Commission />} />

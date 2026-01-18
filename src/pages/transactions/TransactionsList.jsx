@@ -6,6 +6,7 @@ import {
   getCustomers,
   getTransactionByType,
   getTransactionByTypeAndBranchId,
+  reverseTransaction,
 } from "../../apis/Customers.js";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -25,8 +26,11 @@ export default function TransactionsList() {
   const selector = JSON.parse(useSelector((state) => state.auth.userInfo));
   const [details, setDetails] = useState([]);
   const [openModal, setOpenModal] = useState(false);
+  const [openReverseModal, setOpenReverseModal] = useState(false);
+  const [transactionToReverse, setTransactionToReverse] = useState(null);
   const [deposits, setDeposits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isReversing, setIsReversing] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationData, setPaginationData] = useState({
     links: [],
@@ -91,6 +95,46 @@ export default function TransactionsList() {
         current_page: 1, // Reset to the first page
       },
     }));
+  };
+
+  const handleReverseTransaction = (transactionId) => {
+    setTransactionToReverse(transactionId);
+    setOpenReverseModal(true);
+  };
+
+  const confirmReverseTransaction = () => {
+    if (!transactionToReverse) return;
+
+    setIsReversing(true);
+    reverseTransaction(dispatch, transactionToReverse)
+      .then((resp) => {
+        if (resp?.data?.success) {
+          toast.success("Transaction reversed successfully");
+          setOpenModal(false);
+          setOpenReverseModal(false);
+          setTransactionToReverse(null);
+          fetchCustomers(currentPage, paginationData.meta.per_page);
+        } else {
+          toast.error(
+            resp?.response?.data?.message || "Failed to reverse transaction",
+          );
+        }
+        setIsReversing(false);
+      })
+      .catch((err) => {
+        setIsReversing(false);
+        toast.error(
+          err?.response?.data?.message || "An error occurred. Try again!",
+        );
+      });
+  };
+
+  const canReverseTransaction = (transaction) => {
+    return (
+      transaction?.reversed_by === null &&
+      transaction?.reverses_id === null &&
+      transaction?.transaction_type !== "reversal"
+    );
   };
 
   return (
@@ -210,10 +254,10 @@ export default function TransactionsList() {
 
                       <td className="relative whitespace-nowrap py-5 pl-3 pr-2 text-center text-sm font-medium sm:pr-4">
                         <button
-                        onClick={() => {
-                          setDetails(deposit);
-                          setOpenModal(true);
-                        }}
+                          onClick={() => {
+                            setDetails(deposit);
+                            setOpenModal(true);
+                          }}
                           className="cursor-pointer text-indigo-600 hover:text-indigo-900"
                         >
                           Details
@@ -338,8 +382,97 @@ export default function TransactionsList() {
                       </dd>
                     </div>
                   )}
-                 
                 </dl>
+              </div>
+              {canReverseTransaction(details) && (
+                <div className="mt-6 border-t border-gray-200 pt-4">
+                  <button
+                    onClick={() => handleReverseTransaction(details.id)}
+                    disabled={isReversing}
+                    className="w-full rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    {isReversing ? "Reversing..." : "Reverse Transaction"}
+                  </button>
+                </div>
+              )}
+            </div>
+          </Modal.Body>
+        </Modal>
+
+        {/* Reverse Transaction Confirmation Modal */}
+        <Modal
+          show={openReverseModal}
+          size="md"
+          popup
+          onClose={() => {
+            setOpenReverseModal(false);
+            setTransactionToReverse(null);
+          }}
+        >
+          <Modal.Header />
+          <Modal.Body>
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="mb-2 text-lg font-semibold text-gray-900">
+                  Confirm Transaction Reversal
+                </h3>
+                <p className="mb-4 text-sm text-gray-600">
+                  Are you sure you want to reverse this transaction? This action
+                  cannot be undone.
+                </p>
+              </div>
+
+              {details && (
+                <div className="border-t border-gray-200 pt-4">
+                  <dl className="divide-y divide-gray-200">
+                    <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt className="text-sm font-medium text-gray-900">
+                        Reference
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
+                        {details?.reference}
+                      </dd>
+                    </div>
+
+                    <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt className="text-sm font-medium text-gray-900">
+                        Amount
+                      </dt>
+                      <dd className="mt-1 text-sm font-semibold text-gray-900 sm:col-span-2 sm:mt-0">
+                        ₦{numeral(details?.amount).format("0,0.00")}
+                      </dd>
+                    </div>
+
+                    <div className="py-3 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt className="text-sm font-medium text-gray-900">
+                        Customer
+                      </dt>
+                      <dd className="mt-1 text-sm text-gray-700 sm:col-span-2 sm:mt-0">
+                        {details?.customer?.surname}{" "}
+                        {details?.customer?.first_name}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+              )}
+
+              <div className="flex gap-3 space-x-2 pt-4">
+                <button
+                  onClick={() => {
+                    setOpenReverseModal(false);
+                    setTransactionToReverse(null);
+                  }}
+                  className="flex-1 rounded-md bg-gray-200 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmReverseTransaction}
+                  disabled={isReversing}
+                  className="flex-1 rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isReversing ? "Reversing..." : "Confirm Reverse"}
+                </button>
               </div>
             </div>
           </Modal.Body>

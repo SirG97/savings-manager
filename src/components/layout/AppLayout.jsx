@@ -32,6 +32,7 @@ import {
   TrophyIcon,
   TicketIcon,
   ChevronRightIcon,
+  ArrowPathIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import logo from "../../assets/logos/profile.png";
@@ -84,6 +85,12 @@ export default function AppLayout({ children }) {
       name: "Deposits",
       href: "/transactions",
       icon: BanknotesIcon,
+      current: false,
+    },
+    {
+      name: "Reversals",
+      href: "/reversals",
+      icon: ArrowPathIcon,
       current: false,
     },
     {
