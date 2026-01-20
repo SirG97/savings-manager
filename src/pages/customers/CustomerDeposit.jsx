@@ -121,23 +121,21 @@ export default function CustomerDeposit() {
 
   return (
     <AppLayout>
-      <div className="space-y-10  divide-gray-900/10">
+      <div className="space-y-10 divide-gray-900/10">
         {/* <Toaster position="top-right" richColors /> */}
         <button
-              type="button"
-              onClick={() => navigate(-1)}
-              className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              <ArrowLeftIcon
-                aria-hidden="true"
-                className="-ml-0.5 mr-1.5 size-5 text-gray-400"
-              />
-              Back
-            </button>
+          type="button"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          <ArrowLeftIcon
+            aria-hidden="true"
+            className="-ml-0.5 mr-1.5 size-5 text-gray-400"
+          />
+          Back
+        </button>
         <div className="grid grid-cols-1 gap-x-8 gap-y-8 pt-0 md:grid-cols-3">
-          
           <div className="px-4 sm:px-0">
-   
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-base/7 font-semibold text-gray-900">
@@ -170,6 +168,26 @@ export default function CustomerDeposit() {
                       "0,0.00",
                     )}
                   </p>
+                  {customer?.customer_wallet?.loan &&
+                    customer?.customer_wallet?.loan > 0 && (
+                      <>
+                        <p className="text-md font-semibold text-red-400">
+                          Outstanding Loan: ₦
+                          {numeral(customer?.customer_wallet?.loan).format(
+                            "0,0.00",
+                          )}
+                        </p>
+                        <div className="mt-2 rounded-md border border-yellow-200 bg-yellow-50 p-3">
+                          <p className="text-sm text-red-800">
+                            <span className="font-semibold">Warning:</span> If a
+                            deposit is made, the outstanding loan amount will be
+                            deducted first before the remaining amount is added
+                            to the customer's balance until the loan is fully
+                            paid.
+                          </p>
+                        </div>
+                      </>
+                    )}
                 </div>
                 <div className="sm:col-span-6">
                   <TextInput
